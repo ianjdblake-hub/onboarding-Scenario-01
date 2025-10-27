@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager's Onboarding Scenario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            margin: 0;
+        }
+        
+        .progress-fill {
+            background: #667eea;
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .scenario-intro {
+            margin-bottom: 30px;
+        }
+        
+        .scenario-intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .scenario-intro p {
+            margin-bottom: 12px;
+        }
+        
+        .decision-point {
+            display: none;
+        }
+        
+        .decision-point.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .decision-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .decision-header h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        
+        .situation {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .situation h4 {
+            color: #f57c00;
+            margin-bottom: 12px;
+        }
+        
+        .options {
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .option h5 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .option p {
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .option .meta {
+            font-size: 14px;
+            color: #999;
+            font-style: italic;
+        }
+        
+        .outcome-section {
+            display: none;
+            background: #f0f7ff;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .outcome-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .outcome-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+        
+        .outcome-section h4 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .outcome-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .outcome-section li {
+            margin-bottom: 8px;
+        }
+        
+        .restart-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        .restart-btn:hover {
+            background: #5568d3;
+        }
+        
+        .choice-path {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .choice-path strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Manager's Onboarding Scenario</h1>
+            <p>Setting Up Jamie for Success at Meridian Corp</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        
+        <div class="content">
+            <!-- Introduction -->
+            <div id="intro" class="scenario-intro">
+                <h2>Your Challenge</h2>
+                <p><strong>You are Alex Rivera</strong>, Senior Director of Product Development at Meridian Corporation (5,000 employees). You've just hired <strong>Jamie Patterson</strong> as a Product Manager.</p>
+                
+                <p>Jamie has strong skills but comes from a smaller company. Meridian's matrix organization and relationship-driven culture are new territory. New hires often struggle not from lack of ability, but from failing to build the right networks.</p>
+                
+                <p><strong>Your challenge:</strong> Balance giving Jamie autonomy (valued by company culture) versus providing structure to prevent costly mistakes. Your leadership effectiveness will be judged on how quickly Jamie becomes productive.</p>
+                
+                <p style="margin-top: 20px;"><strong>You'll make 5 key decisions over 90 days. Each choice has real consequences. There's no single "right" answer.</strong></p>
+                
+                <button class="restart-btn" onclick="startScenario()">Begin Scenario</button>
+            </div>
+            
+            <!-- Decision Point 1 -->
+            <div id="decision1" class="decision-point">
+                <div class="decision-header">
+                    <h3>Decision Point 1: Week 1 - Setting the Onboarding Approach</h3>
+                </div>
+                
+                <div class="situation">
+                    <h4>The Situation</h4>
+                    <p>End of Jamie's first week. HR onboarding is complete. Your peer Marcus (Engineering) warns: "Make sure your new PM understands our culture first. The last outside PM burned bridges."</p>
+                    <p>Your manager Patricia says: "Don't over-coddle them. People who succeed here are self-starters."</p>
+                    <p>You have urgent deadlines. Jamie seems engaged but tentative. You meet in 30 minutes to discuss their plan.</p>
+                </div>
+                
+                <div class="options">
+                    <div class="option" onclick="makeChoice(1, 'A')">
+                        <h5>Option A: The Structured Deep Dive</h5>
+                        <p>Create a detailed 60-day plan with scheduled 1-on-1s with 12 key stakeholders (you arrange). Prepare briefing docs. Jamie shadows meetings for a month before independent work.</p>
+                        <p class="meta">Time investment: ~8 hours setup + ongoing coordination</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(1, 'B')">
+                        <h5>Option B: The Strategic Starter Project</h5>
+                        <p>Assign a real project immediately—competitive analysis for product launch. Jamie must reach out to Sales, Customer Success, and Engineering independently. You make 2-3 key intros and have weekly check-ins.</p>
+                        <p class="meta">Time investment: ~2 hours setup, weekly 30-min check-ins</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(1, 'C')">
+                        <h5>Option C: The Buddy System Plus</h5>
+                        <p>Pair Jamie with Priya (successful 3-year PM) who can introduce them around. Jamie attends all your meetings for a month to observe. Assign smaller supportive tasks while they orient.</p>
+                        <p class="meta">Time investment: ~1 hour to brief Priya, no extra meeting time</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(1, 'D')">
+                        <h5>Option D: The Immersion Approach</h5>
+                        <p>Assign Jamie to the high-visibility Q4 product release team immediately. Weekly leadership reviews. They'll need to contribute quickly. You're in these meetings to observe and coach.</p>
+                        <p class="meta">Time investment: Minimal extra (already in meetings)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decision Point 2 -->
+            <div id="decision2" class="decision-point">
+                <div class="decision-header">
+                    <h3>Decision Point 2: Week 3 - First Assignment Strategy</h3>
+                </div>
+                
+                <div class="situation">
+                    <h4>The Situation</h4>
+                    <p id="situation2"></p>
+                    <p><strong>Three things just happened:</strong></p>
+                    <p>1) Patricia asks: "Haven't seen Jamie in product reviews yet. Are they getting ramped on deliverables?"</p>
+                    <p>2) Urgent: Major client threatens to churn unless you deliver a feature integration in Q4. Needs a PM owner. High-stakes, high-visibility.</p>
+                    <p>3) Annual planning starts in 2 weeks. Each PM presents strategy to VPs. Jamie's area (developer tools) hasn't had a PM for 2 months.</p>
+                </div>
+                
+                <div class="options">
+                    <div class="option" onclick="makeChoice(2, 'A')">
+                        <h5>Option A: The High-Stakes Client Project</h5>
+                        <p>Jamie owns the enterprise client integration. Works with demanding Sales director, coordinates with Engineering, presents to execs weekly. You're closely involved but Jamie is the named owner.</p>
+                        <p class="meta">Risk: High | Visibility: Very High | Your time: Significant</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(2, 'B')">
+                        <h5>Option B: The Annual Planning Presentation</h5>
+                        <p>Jamie owns developing and presenting the developer tools roadmap. Three weeks to research, talk to stakeholders, and synthesize strategy. You review before final presentation.</p>
+                        <p class="meta">Risk: Medium | Visibility: High | Your time: Moderate</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(2, 'C')">
+                        <h5>Option C: Split Approach - Support Role on Both</h5>
+                        <p>Jamie supports you on client project (you own it) AND helps with planning background analysis (you present). Lower risk while building knowledge and relationships.</p>
+                        <p class="meta">Risk: Low | Visibility: Low | Your time: Low</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(2, 'D')">
+                        <h5>Option D: Continue Current Path</h5>
+                        <p>Extend current tasks—deeper competitive analysis and top 10 customer feature requests with recommendations. Push client project and planning by 4-6 weeks. More relationship building time.</p>
+                        <p class="meta">Risk: Very Low | Visibility: Low | Your time: Minimal</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decision Point 3 -->
+            <div id="decision3" class="decision-point">
+                <div class="decision-header">
+                    <h3>Decision Point 3: Week 6 - Intervention or Independence?</h3>
+                </div>
+                
+                <div class="situation">
+                    <h4>The Situation</h4>
+                    <p id="situation3"></p>
+                </div>
+                
+                <div class="options">
+                    <div class="option" onclick="makeChoice(3, 'A')">
+                        <h5>Option A: Take Control</h5>
+                        <p id="option3A"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(3, 'B')">
+                        <h5>Option B: Detailed Coaching</h5>
+                        <p id="option3B"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(3, 'C')">
+                        <h5>Option C: Facilitate Connections</h5>
+                        <p id="option3C"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(3, 'D')">
+                        <h5>Option D: Let It Play Out</h5>
+                        <p id="option3D"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decision Point 4 -->
+            <div id="decision4" class="decision-point">
+                <div class="decision-header">
+                    <h3>Decision Point 4: Week 10 - Network Development Crisis</h3>
+                </div>
+                
+                <div class="situation">
+                    <h4>The Situation</h4>
+                    <p id="situation4"></p>
+                </div>
+                
+                <div class="options">
+                    <div class="option" onclick="makeChoice(4, 'A')">
+                        <h5>Option A: Make Introductions Yourself</h5>
+                        <p id="option4A"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(4, 'B')">
+                        <h5>Option B: Coach Independent Outreach</h5>
+                        <p id="option4B"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(4, 'C')">
+                        <h5>Option C: Expand Buddy System</h5>
+                        <p id="option4C"></p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(4, 'D')">
+                        <h5>Option D: Force Through Project</h5>
+                        <p id="option4D"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decision Point 5 -->
+            <div id="decision5" class="decision-point">
+                <div class="decision-header">
+                    <h3>Decision Point 5: Week 12 - Performance Calibration</h3>
+                </div>
+                
+                <div class="situation">
+                    <h4>The Situation</h4>
+                    <p id="situation5"></p>
+                    <p>Your VP asks for your 90-day assessment of Jamie. What do you say?</p>
+                </div>
+                
+                <div class="options">
+                    <div class="option" onclick="makeChoice(5, 'A')">
+                        <h5>Option A: Advocate Strongly</h5>
+                        <p>"Jamie has strong potential and needs more time. The onboarding challenges are normal. I'm confident they'll be a strong contributor."</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(5, 'B')">
+                        <h5>Option B: Balanced Assessment</h5>
+                        <p>"Jamie has clear strengths in [X] but gaps in [Y]. Here's my development plan for the next 90 days to address those gaps."</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(5, 'C')">
+                        <h5>Option C: Performance Improvement Plan</h5>
+                        <p>"Jamie isn't meeting expectations. I recommend a formal PIP with specific goals. If not met in 60 days, we should consider other options."</p>
+                    </div>
+                    
+                    <div class="option" onclick="makeChoice(5, 'D')">
+                        <h5>Option D: Question the Fit</h5>
+                        <p>"I'm concerned this isn't the right fit. Jamie's strengths don't align with what we need. We should discuss transition options."</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Outcomes -->
+            <div id="outcome" class="outcome-section">
+                <div class="choice-path" id="choicePath"></div>
+                <h3 id="outcomeTitle"></h3>
+                <div id="outcomeContent"></div>
+                <button class="restart-btn" onclick="restart()">Try Different Choices</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let choices = [];
+        let currentDecision = 0;
+        
+        const outcomes = {
+            // High performer paths
+            'DBABA': {
+                title: '🌟 The Accelerated Success',
+                content: `<h4>Outcome: Jamie thrives and becomes a model for future hires</h4>
+                <p>Your approach worked brilliantly. The immersion strategy gave Jamie immediate context and visibility. The planning presentation, while challenging, forced them to build relationships quickly. Your balanced coaching and willingness to let Jamie learn from mistakes built their confidence.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Jamie delivered a well-received planning presentation after your coaching</li>
+                    <li>Within 6 months, Jamie is leading cross-functional initiatives independently</li>
+                    <li>Your VP comments: "Great hire. You knew when to push and when to support."</li>
+                    <li>Jamie becomes a resource for onboarding future team members</li>
+                    <li>Your leadership reputation is enhanced—you're given more hiring authority</li>
+                </ul>
+                <h4>Key Success Factors:</h4>
+                <ul>
+                    <li>Early exposure to real work built Jamie's credibility</li>
+                    <li>You provided coaching at critical moments without taking over</li>
+                    <li>Jamie developed problem-solving skills through guided independence</li>
+                </ul>`
+            },
+            'CBBBA': {
+                title: '🤝 The Solid Foundation',
+                content: `<h4>Outcome: Slower start but sustainable long-term success</h4>
+                <p>Your structured approach paid off. While Jamie took longer to ramp up, they built deep relationships and understanding. The buddy system with Priya created a strong foundation. Your patience through the planning challenges and commitment to balanced feedback created psychological safety.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>By month 6, Jamie is one of the most connected PMs in the organization</li>
+                    <li>Jamie's thoroughness and collaborative approach are valued by stakeholders</li>
+                    <li>Priya credits you with great mentorship—offers to buddy future hires</li>
+                    <li>While not the fastest ramp, Jamie has lowest risk of early missteps</li>
+                    <li>Your approach is studied as a model for structured onboarding</li>
+                </ul>
+                <h4>Key Success Factors:</h4>
+                <ul>
+                    <li>Investment in relationships prevented political mistakes</li>
+                    <li>Balanced feedback built confidence while addressing gaps</li>
+                    <li>Your patience communicated that sustainable success matters more than speed</li>
+                </ul>`
+            },
+            // Moderate success paths
+            'ACDBB': {
+                title: '⚠️ The Micromanaged Talent',
+                content: `<h4>Outcome: Jamie succeeds but becomes dependent on you</h4>
+                <p>Your structured approach and high involvement helped Jamie avoid mistakes, but they never learned to navigate independently. Your intervention in crises and facilitation of connections created a pattern of dependency.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Jamie delivers good work but constantly checks with you first</li>
+                    <li>Your time investment remains high even after 6 months</li>
+                    <li>When you're unavailable, Jamie struggles with decisions</li>
+                    <li>Other team members notice Jamie relies on you more than peers do</li>
+                    <li>Your own projects suffer from the time commitment</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>Deep structure prevented Jamie from building problem-solving muscles</li>
+                    <li>Consistent intervention taught Jamie to wait for your guidance</li>
+                    <li>While avoiding failure, you also prevented independent success</li>
+                </ul>
+                <h4>Next Steps:</h4>
+                <p>You need to deliberately create distance and push Jamie to make more independent decisions, even if they make some mistakes.</p>`
+            },
+            'BDCBA': {
+                title: '🔍 The Missed Connections',
+                content: `<h4>Outcome: Good individual work but limited organizational impact</h4>
+                <p>Jamie became competent at tasks but never built the critical relationships needed for influence. The starter project approach didn't force enough interaction. When networking issues emerged, coaching them on how to reach out independently didn't create the necessary connections quickly enough.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Jamie produces solid analysis and documentation</li>
+                    <li>However, proposals get stuck in review—Jamie doesn't know who to influence</li>
+                    <li>Engineering and Sales teams work around Jamie rather than with them</li>
+                    <li>After 9 months, Jamie is frustrated: "I do good work but no one listens"</li>
+                    <li>You spend significant time being Jamie's advocate since they lack their own network</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>In a relationship-driven culture, competence alone isn't enough</li>
+                    <li>Early networking investment would have compounded over time</li>
+                    <li>Coaching without facilitation left Jamie without critical connections</li>
+                </ul>
+                <h4>Recovery Path:</h4>
+                <p>You need to make strategic introductions now and assign Jamie to a highly collaborative project to build relationships retroactively.</p>`
+            },
+            // Struggling paths
+            'DABDC': {
+                title: '💥 The Political Casualty',
+                content: `<h4>Outcome: Jamie damaged key relationships early on</h4>
+                <p>The immersion approach exposed Jamie to high-stakes situations before they understood the political landscape. The high-stakes client project put them in conflict with senior stakeholders. Letting situations play out resulted in burned bridges that are hard to repair.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Marcus (Engineering) complains Jamie "doesn't listen and overcommits"</li>
+                    <li>Sales director tells your VP: "Your new PM created more problems than solutions"</li>
+                    <li>Jamie developed a reputation as difficult to work with</li>
+                    <li>The PIP feels punitive; Jamie is actively job searching</li>
+                    <li>Your judgment as a manager is questioned: "Why didn't you step in sooner?"</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>High-risk exposure without adequate support led to preventable mistakes</li>
+                    <li>Relationship damage in matrix organizations is hard to recover from</li>
+                    <li>Your hands-off approach was mismatched to Jamie's needs and company culture</li>
+                </ul>
+                <h4>Lessons:</h4>
+                <p>Even strong hires need political guidance in complex organizations. Early intervention could have prevented reputation damage.</p>`
+            },
+            'BDDBC': {
+                title: '😰 The Overwhelmed Hire',
+                content: `<h4>Outcome: Jamie is drowning and confidence is shattered</h4>
+                <p>The starter project threw Jamie into the deep end without enough support. Continuing on the same path when they were struggling, letting problems play out, and forcing connections through high-pressure projects compounded the stress. Jamie feels set up to fail.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Jamie works long hours but feels constantly behind</li>
+                    <li>Multiple stakeholders have complained about missed commitments</li>
+                    <li>Jamie has become withdrawn in meetings—afraid to speak up after early mistakes</li>
+                    <li>The PIP conversation confirms Jamie's worst fears about not being good enough</li>
+                    <li>Jamie gives notice within a week—accepting another offer with relief</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>Insufficient structure for someone navigating a complex new environment</li>
+                    <li>Problems compounded as confidence eroded</li>
+                    <li>What looked like independence was actually neglect</li>
+                </ul>
+                <h4>Reflection:</h4>
+                <p>A strong hire is leaving not because they couldn't do the work, but because your onboarding approach didn't set them up for success. This will impact your ability to attract talent.</p>`
+            },
+            'AACAD': {
+                title: '👎 The Wrong Fit Narrative',
+                content: `<h4>Outcome: Jamie leaves and is remembered as a failed hire</h4>
+                <p>Heavy early structure, taking over when things got difficult, making all introductions, and ultimately questioning the fit created a narrative that Jamie couldn't succeed independently. Your actions, meant to help, actually undermined Jamie's credibility.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Patricia (your manager) questions your hiring judgment</li>
+                    <li>Team members wonder why you hired someone who "needed so much hand-holding"</li>
+                    <li>Jamie's confidence is destroyed—they question their own abilities</li>
+                    <li>Your next hire will be scrutinized more closely</li>
+                    <li>You lose political capital and some autonomy in hiring decisions</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>Your lack of confidence in Jamie became a self-fulfilling prophecy</li>
+                    <li>Over-managing prevented Jamie from ever demonstrating capability</li>
+                    <li>The "wrong fit" assessment may say more about management approach than Jamie's ability</li>
+                </ul>
+                <h4>The Uncomfortable Truth:</h4>
+                <p>Jamie might succeed brilliantly at another company with a different onboarding approach. This reflects as much on your management as their capabilities.</p>`
+            },
+            // Recovery path
+            'CBCBC': {
+                title: '🔄 The Recovery Mode',
+                content: `<h4>Outcome: Rough start but learning valuable lessons</h4>
+                <p>Your buddy system approach was solid, but the planning presentation revealed gaps. Your coaching helped but couldn't fully close them in time. Facilitating connections and having Priya expand the network helped, but the balanced assessment with a PIP-like development plan sends a concerning message.</p>
+                <h4>Results:</h4>
+                <ul>
+                    <li>Jamie is on a "watch list"—not failing but not thriving</li>
+                    <li>The formal development plan creates stress but also clear direction</li>
+                    <li>Over the next quarter, Jamie makes steady improvement</li>
+                    <li>By month 9, Jamie is performing adequately but not exceptionally</li>
+                    <li>The relationship with you is professional but Jamie always feels like they're being evaluated</li>
+                </ul>
+                <h4>What Happened:</h4>
+                <ul>
+                    <li>The approach was reasonable but the formal performance messaging created pressure</li>
+                    <li>Jamie can recover but will likely never feel fully confident in this role</li>
+                    <li>You salvaged the hire but didn't create the success story you hoped for</li>
+                </ul>
+                <h4>Looking Forward:</h4>
+                <p>Jamie will likely stay and contribute adequately, but may look for opportunities elsewhere where they can start fresh without the "struggled at first" reputation.</p>`
+            },
+            // Default for other combinations
+            'default': {
+                title: '📊 Mixed Results',
+                content: `<h4>Outcome: Some successes, some challenges</h4>
+                <p>Your combination of choices led to a mixed outcome. Jamie has made progress in some areas but faces challenges in others.</p>
+                <h4>Key Observations:</h4>
+                <ul>
+                    <li>Some of your early decisions set Jamie up well, while later choices created complications</li>
+                    <li>The relationship between different decisions matters—consistency is important</li>
+                    <li>Jamie's success still depends on how you adjust your approach going forward</li>
+                </ul>
+                <h4>Reflection Questions:</h4>
+                <ul>
+                    <li>Which decisions felt most aligned with your management philosophy?</li>
+                    <li>Where did you prioritize short-term results over long-term development?</li>
+                    <li>What would you do differently knowing what you know now?</li>
+                </ul>
+                <p>Try the scenario again to explore how different choices compound over time.</p>`
+            }
+        };
+        
+        function startScenario() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('decision1').classList.add('active');
+            currentDecision = 1;
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const progress = (currentDecision / 5) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        function makeChoice(decisionNum, choice) {
+            choices.push(choice);
+            
+            // Hide current decision
+            document.getElementById('decision' + decisionNum).classList.remove('active');
+            
+            // Show next decision or outcome
+            if (decisionNum < 5) {
+                currentDecision = decisionNum + 1;
+                updateProgress();
+                populateNextDecision(decisionNum + 1, choice);
+                document.getElementById('decision' + (decisionNum + 1)).classList.add('active');
+            } else {
+                // Show outcome
+                showOutcome();
+            }
+        }
+        
+        function populateNextDecision(decisionNum, previousChoice) {
+            // Populate decision 2 based on decision 1
+            if (decisionNum === 2) {
+                const situations = {
+                    'A': 'Week 3: You\'ve spent significant time setting up Jamie\'s structured plan. Jamie has met several stakeholders and taken good notes. However, they haven\'t produced any independent deliverables yet.',
+                    'B': 'Week 3: Jamie has been working on the competitive analysis independently. They\'ve reached out to a few people but progress is slow. Some stakeholders mention they haven\'t heard from Jamie yet.',
+                    'C': 'Week 3: Jamie and Priya have connected well. Jamie attends your meetings and takes excellent notes. However, Jamie has been mostly doing supportive work—no major deliverables yet.',
+                    'D': 'Week 3: Jamie has been in the Q4 release meetings but mostly observing. They contribute occasionally but haven\'t taken ownership of anything yet. The team sees them as "Alex\'s new person."'
+                };
+                document.getElementById('situation2').textContent = situations[previousChoice];
+            }
+            
+            // Populate decision 3 based on decision 2
+            if (decisionNum === 3) {
+                const situations = {
+                    'A': 'Week 6: Jamie is struggling with the high-stakes client project. The Sales director is frustrated that requirements gathering is taking too long. Engineering is waiting for clear specs. Jamie seems stressed and working late hours.',
+                    'B': 'Week 6: Jamie just showed you a draft of the planning presentation. It misses key stakeholder priorities Marcus mentioned and uses outdated market data. The presentation is in 5 days. Jamie seems proud of the work.',
+                    'C': 'Week 6: Jamie has been doing solid supporting work but hasn\'t built visibility. You overhear Marcus ask Priya: "When is your new PM going to actually start leading something?" Jamie seems comfortable but not challenged.',
+                    'D': 'Week 6: Jamie completed the competitive analysis—it\'s thorough and well-researched. However, you notice they only talked to 3 people (all arranged by you). They haven\'t proactively reached out to anyone new.'
+                };
+                document.getElementById('situation3').textContent = situations[previousChoice];
+                
+                const optionsA = {
+                    'A': 'Step in and take over the client project. You have the relationships to unblock it quickly. Jamie can observe and learn. Protects the client relationship but Jamie loses ownership.',
+                    'B': 'Provide detailed line-by-line feedback on the presentation. Tell Jamie exactly what to change, which stakeholders to talk to, and what data to use. You essentially reconstruct it.',
+                    'C': 'Let Jamie continue the support role. They\'re learning and not making mistakes. Assign them another research project. Low risk but limited growth.',
+                    'D': 'Accept the analysis as complete. Jamie did thorough work. Don\'t push them to expand their network—they\'ll do it when ready.'
+                };
+                document.getElementById('option3A').textContent = optionsA[previousChoice];
+                
+                const optionsB = {
+                    'A': 'Give Jamie clear feedback on what\'s going wrong with the client project, then coach them through recovery. Share what you\'d do, but make Jamie execute the plan. Time-intensive coaching.',
+                    'B': 'Give detailed feedback on gaps in the presentation and have Jamie revise it. Schedule calls with stakeholders they missed. You review again before the final. Significant time investment.',
+                    'C': 'Have an honest conversation: "You\'re ready for more. I\'m going to assign you to lead the next sprint planning." Push them into deeper ownership with your support available.',
+                    'D': 'Provide feedback: "Strong work, but I noticed you\'ve only connected with people I introduced. Here\'s how to reach out cold at this company." Give them a framework for networking.'
+                };
+                document.getElementById('option3B').textContent = optionsB[previousChoice];
+                
+                const optionsC = {
+                    'A': 'Connect Jamie directly with the Sales director and Marcus. Facilitate a working session where they can clarify requirements together. You attend but Jamie leads. Create the connections they need.',
+                    'B': 'Connect Jamie with the key stakeholders they missed—set up 30-minute calls for later this week. Give Jamie questions to ask. Facilitate the connections they should have made.',
+                    'C': 'Assign Jamie as co-lead with a senior PM on an upcoming initiative. The exposure will force connections. Structured collaboration rather than solo support work.',
+                    'D': 'Introduce Jamie to three people they should connect with, make it warm. Then tell Jamie to identify 5 more people to meet and set up the meetings themselves.'
+                };
+                document.getElementById('option3C').textContent = optionsC[previousChoice];
+                
+                const optionsD = {
+                    'A': 'Let the client situation play out. Jamie needs to feel the consequences and figure out how to recover. You\'re available if asked, but don\'t intervene. Risky learning experience.',
+                    'B': 'Let Jamie present the draft as-is. They\'ll get direct feedback from the VP. Sometimes harsh lessons stick best. You\'ll debrief after.',
+                    'D': 'Don\'t push. Jamie will naturally expand their network over time. Different people have different speeds for relationship building.',
+                    'C': 'Keep them in the support role longer. When they ask for more responsibility, you\'ll know they\'re ready. Let them signal readiness.'
+                };
+                document.getElementById('option3D').textContent = optionsD[previousChoice];
+            }
+            
+            // Populate decision 4 based on path
+            if (decisionNum === 4) {
+                const situations = {
+                    'AA': 'Week 10: You took over the client project and provided detailed presentation feedback. Jamie\'s work is now solid but you\'re noticing they always wait for your direction. A cross-team issue is stalled because Jamie doesn\'t know who owns infrastructure decisions.',
+                    'AB': 'Week 10: You coached Jamie through the client project and presentation revisions. Both went okay. However, you discover Jamie still hasn\'t connected with Product Operations, Data Science, or the Executive team—all critical for long-term success.',
+                    'AC': 'Week 10: You facilitated connections for both the client project and planning stakeholders. Jamie executed well with your setup. But now a new project is blocked because Jamie doesn\'t have finance contacts and isn\'t sure how to get budget approval.',
+                    'AD': 'Week 10: You let the client project play out—it was rough. The planning presentation went better after your facilitated connections. Jamie has learned some hard lessons but has gaps in their network that are now causing project delays.',
+                    'BA': 'Week 10: The client project struggled but Jamie eventually figured it out. However, it took twice as long as it should have because Jamie kept hitting walls trying to reach the right people. Marcus is frustrated by the inefficiency.',
+                    'BB': 'Week 10: After your coaching on both fronts, Jamie has improved but is tentative about reaching out to senior people. A high-priority feature discussion is happening and Jamie wasn\'t invited because they don\'t have relationships with the decision-makers.',
+                    'BC': 'Week 10: The connections you facilitated helped Jamie succeed on immediate tasks, but they\'re now stuck on a new initiative because they still don\'t know the Finance, Legal, and Executive contacts needed.',
+                    'BD': 'Week 10: Jamie\'s independent networking has been slow. They\'re now blocked on a project requiring senior stakeholder approval, but they only have relationships with individual contributors.',
+                    'CA': 'Week 10: After stepping in, you protected Jamie from mistakes but they remain in your shadow. Colleagues still see Jamie as "Alex\'s hire" rather than as an independent contributor. Network gaps persist.',
+                    'CB': 'Week 10: Your detailed coaching helped but was time-consuming. Jamie has improved but now a critical escalation needs to go to the VP level, and Jamie doesn\'t have that relationship.',
+                    'CC': 'Week 10: The facilitated connections and co-lead assignment helped. Jamie has more relationships but mostly at peer level. They need senior stakeholder relationships for strategic work.',
+                    'CD': 'Week 10: Jamie has been productive in the support role but network development has stalled. They\'re now assigned to a strategic initiative requiring relationships they don\'t have.',
+                    'DA': 'Week 10: The combination of letting situations play out early and then taking over created confusion. Jamie\'s network has significant gaps and they seem uncertain about how much independence you expect.',
+                    'DB': 'Week 10: The delayed coaching helped but Jamie is playing catch-up. They\'re now on a project requiring cross-functional alignment, but lack relationships with key teams.',
+                    'DC': 'Week 10: Facilitating connections after earlier independence worked reasonably well, but Jamie still lacks senior-level relationships needed for bigger initiatives.',
+                    'DD': 'Week 10: Continued independence hasn\'t resulted in strong network development. Jamie has some peer relationships but major gaps in senior stakeholders and cross-functional teams.'
+                };
+                const pathKey = choices[choices.length-2] + choices[choices.length-1];
+                document.getElementById('situation4').textContent = situations[pathKey] || situations['DD'];
+                
+                const optionsA4 = {
+                    'default': 'Schedule and attend meetings with the critical missing contacts yourself. Introduce Jamie, vouch for them, and establish the relationships they need immediately. Fastest but increases dependency.'
+                };
+                document.getElementById('option4A').textContent = optionsA4['default'];
+                
+                const optionsB4 = {
+                    'default': 'Have a coaching session with Jamie. Explain who they should know by now and why. Provide specific advice on how to reach out to senior people, what to say, and how to add value. Jamie executes independently.'
+                };
+                document.getElementById('option4B').textContent = optionsB4['default'];
+                
+                const optionsC4 = {
+                    'default': 'Ask Priya to expand her mentorship—introduce Jamie to her network, invite Jamie to more meetings, and model how to build relationships. Leverage the existing buddy system more aggressively.'
+                };
+                document.getElementById('option4C').textContent = optionsC4['default'];
+                
+                const optionsD4 = {
+                    'default': 'Assign Jamie to a highly cross-functional project that forces them to build the missing relationships. They\'ll need to reach out to Finance, Legal, Executives, and other teams to succeed. Sink or swim motivation.'
+                };
+                document.getElementById('option4D').textContent = optionsD4['default'];
+            }
+            
+            // Populate decision 5
+            if (decisionNum === 5) {
+                const pathSummary = generatePathSummary();
+                document.getElementById('situation5').textContent = `End of 90 days. Jamie's results are mixed. ${pathSummary}`;
+            }
+        }
+        
+        function generatePathSummary() {
+            const path = choices.join('');
+            const summaries = {
+                'DABA': 'Jamie started with high visibility, delivered a solid planning presentation, and has built meaningful relationships. Some rough moments but trending positive.',
+                'CBBB': 'Jamie had strong support, handled challenges with coaching, and has built relationships steadily. Solid foundation but not spectacular.',
+                'ACDB': 'Jamie was heavily guided early, struggled when given independence, and required significant intervention. Competent but not independent.',
+                'BDCB': 'Jamie worked independently early but missed critical networking. Recent coaching helped but gaps remain visible.',
+                'DABD': 'Jamie had early visibility but struggled, required intervention, and forced network building helped somewhat. Rocky path with mixed results.',
+                'BDDB': 'Independent approach throughout hasn\'t resulted in strong network or visible wins. Jamie is struggling and knows it.',
+                'AACA': 'Heavy management throughout prevented mistakes but also prevented independence. Jamie has succeeded only with your involvement.',
+                'CBCB': 'Structured start, coaching through challenges, ongoing support. Jamie is improving but under scrutiny.'
+            };
+            return summaries[path] || 'The combination of autonomy and intervention has produced inconsistent results.';
+        }
+        
+        function showOutcome() {
+            updateProgress();
+            const path = choices.join('');
+            const outcome = outcomes[path] || outcomes['default'];
+            
+            // Create choice path summary
+            const choiceLabels = ['Week 1', 'Week 3', 'Week 6', 'Week 10', 'Week 12'];
+            const choiceSummary = choices.map((c, i) => `<strong>${choiceLabels[i]}:</strong> Option ${c}`).join(' → ');
+            
+            document.getElementById('choicePath').innerHTML = choiceSummary;
+            document.getElementById('outcomeTitle').textContent = outcome.title;
+            document.getElementById('outcomeContent').innerHTML = outcome.content;
+            document.getElementById('outcome').classList.add('active');
+        }
+        
+        function restart() {
+            choices = [];
+            currentDecision = 0;
+            
+            // Hide outcome
+            document.getElementById('outcome').classList.remove('active');
+            
+            // Show intro
+            document.getElementById('intro').style.display = 'block';
+            
+            // Hide all decisions
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById('decision' + i).classList.remove('active');
+            }
+            
+            // Reset progress bar
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
