@@ -638,6 +638,7 @@
             document.getElementById('decision1').classList.add('active');
             currentDecision = 1;
             updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
         function updateProgress() {
@@ -650,6 +651,9 @@
             
             // Hide current decision
             document.getElementById('decision' + decisionNum).classList.remove('active');
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             
             // Show next decision or outcome
             if (decisionNum < 5) {
@@ -816,6 +820,9 @@
             
             // Reset progress bar
             document.getElementById('progressBar').style.width = '0%';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
